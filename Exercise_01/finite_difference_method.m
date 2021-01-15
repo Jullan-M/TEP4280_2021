@@ -7,22 +7,26 @@ clc
 %% a) Calculating the derivative using the finite difference method
 tan1_ex = tan(1)^2 + 1; % Exact value of dtan(x)/dx  at x=1
 n = 1000;
-h = logspace(-16, -1, n);
+h1 = logspace(-16, -1, n);
+h2 = logspace(-9, -1, n);
 
 % 1st order forward difference with double precision
-tan_I = ((tan(1+h) - tan(1)))./h;
+tan_I = ((tan(1+h1) - tan(1)))./h1;
 
 % 2nd order central difference with double precision
-tan_II = ((tan(1+h) - tan(1-h)))./(2*h);
+tan_II = ((tan(1+h1) - tan(1-h1)))./(2*h1);
 
 % 2nd order central difference with single precision
-tan_III = ((single(tan(1+h)) - single(tan(1-h)) ))./(2*single(h) );
+tan_III = ((single(tan(1+h1)) - single(tan(1-h1)) ))./(2*single(h1) );
 
 % 3rd order forward difference with double precision
-tan_IV = (-11/6*tan(1) + 3*tan(1+h) -3/2*tan(1+2*h) +1/3*tan(1+3*h) )./h;
+tan_IV = (-11/6*tan(1) + 3*tan(1+h2) -3/2*tan(1+2*h2) +1/3*tan(1+3*h2) )./h2;
 
 % 4th order central difference with double precision
-tan_V = (1/12*tan(1-2*h) - 2/3*tan(1-h) + 2/3*tan(1+h)-1/12*tan(1+2*h) )./(h);
+tan_V = (1/12*tan(1-2*h2) - 2/3*tan(1-h2) + 2/3*tan(1+h2)-1/12*tan(1+2*h2) )./(h2);
+
+% 4th order central difference with single precision
+tan_VI = (1/12*single(tan(1-2*h2)) - 2/3*single(tan(1-h2)) + 2/3*single(tan(1+h2))-1/12*single(tan(1+2*h2)) )./(single(h2));
 
 
 err_I = abs(tan_I-tan1_ex)/tan1_ex;
@@ -30,6 +34,7 @@ err_II = abs(tan_II-tan1_ex)/tan1_ex;
 err_III = abs(tan_III-tan1_ex)/tan1_ex;
 err_IV = abs(tan_IV-tan1_ex)/tan1_ex;
 err_V = abs(tan_V-tan1_ex)/tan1_ex;
+err_VI = abs(tan_VI-tan1_ex)/tan1_ex;
 
 %% b) First and second order FDM
 % Here we see that while the trunctuation error scales in accordance with
@@ -48,7 +53,7 @@ err_V = abs(tan_V-tan1_ex)/tan1_ex;
 set(groot, 'defaultTextInterpreter','latex');
 
 figure(1)
-loglog(h,err_I,'--',h,err_II,'--',h,err_III,'--')
+loglog(h1,err_I,'--',h1,err_II,'--',h1,err_III,'--')
 legend({'1st order forward difference, double precision ','2nd order central difference, double precision','2nd order central difference, single precision'},'Location','best')
 
 title('$\mathrm{d}(\tan x)/ \mathrm{d}x = \tan^2(x)+1$')
@@ -60,15 +65,17 @@ grid on
 % The same principle applies for higher order finite difference methods.
 % For double presision numbers, the point where rounding errors become
 % apparent at around $10^{-5}$ and $10^{-4}$ for 3rd and 4th order FDM,
-% respectively. 
+% respectively. For single precision numbers, this point is as high as
+% $\sim 10^{-2}$.
 %
-% The takeaway is that while there is an advantage to be had in decreasing
+% The takeaway is that while there is precision to be gained in decreasing
 % the grid spacing in FDM, there will come a point where one should be
-% mindful of rounding errors. Where this point is depends on the precision
-% of the number format used and on the order of finite difference method.
+% mindful of rounding errors that will nullify this precision. Where this
+% point is depends both on the precision of the number format used and on
+% the order of finite difference method.
 figure(2)
-loglog(h,err_IV,'--', h,err_V,'--')
-legend({'3rd order forward difference, double precision', '4th order central difference, double precision'}, 'Location', 'best')
+loglog(h2,err_IV,'--', h2,err_V,'--', h2,err_VI,'--')
+legend({'3rd order forward difference, double precision', '4th order central difference, double precision', '4th order central difference, single precision'}, 'Location', 'best')
 title('$\mathrm{d}(\tan x)/ \mathrm{d}x = \tan^2(x)+1$')
 xlabel('$h$')
 ylabel('error$= \left|(\mathrm{d}f/\mathrm{d}x_{FD} - \mathrm{d}f/\mathrm{d}x_{An})/\mathrm{d}f/\mathrm{d}x_{An}\right|$')
