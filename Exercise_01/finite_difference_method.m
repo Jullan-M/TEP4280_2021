@@ -17,7 +17,7 @@ tan_I = ((tan(1+h1) - tan(1)))./h1;
 tan_II = ((tan(1+h1) - tan(1-h1)))./(2*h1);
 
 % 2nd order central difference with single precision
-tan_III = ((single(tan(1+h1)) - single(tan(1-h1)) ))./(2*single(h1) );
+tan_III = ((tan(1+single(h1)) - tan(1-single(h1)) ))./(2*single(h1) );
 
 % 3rd order forward difference with double precision
 tan_IV = (-11/6*tan(1) + 3*tan(1+h2) -3/2*tan(1+2*h2) +1/3*tan(1+3*h2) )./h2;
@@ -26,7 +26,7 @@ tan_IV = (-11/6*tan(1) + 3*tan(1+h2) -3/2*tan(1+2*h2) +1/3*tan(1+3*h2) )./h2;
 tan_V = (1/12*tan(1-2*h2) - 2/3*tan(1-h2) + 2/3*tan(1+h2)-1/12*tan(1+2*h2) )./(h2);
 
 % 4th order central difference with single precision
-tan_VI = (1/12*single(tan(1-2*h2)) - 2/3*single(tan(1-h2)) + 2/3*single(tan(1+h2))-1/12*single(tan(1+2*h2)) )./(single(h2));
+tan_VI = (1/12*tan(1-2*single(h2)) - 2/3*tan(1-single(h2)) + 2/3*tan(1+single(h2))-1/12*tan(1+2*single(h2)) )./(single(h2));
 
 
 err_I = abs(tan_I-tan1_ex)/tan1_ex;
@@ -64,7 +64,7 @@ grid on
 %% c) Third and fourth order FDM
 % The same principle applies for higher order finite difference methods.
 % For double presision numbers, the point where rounding errors become
-% apparent at around $10^{-5}$ and $10^{-4}$ for 3rd and 4th order FDM,
+% apparent is at around $10^{-5}$ and $10^{-4}$ for 3rd and 4th order FDM,
 % respectively. For single precision numbers, this point is as high as
 % $\sim 10^{-2}$.
 %
@@ -74,8 +74,9 @@ grid on
 % point is depends both on the precision of the number format used and on
 % the order of finite difference method.
 figure(2)
-loglog(h2,err_IV,'--', h2,err_V,'--', h2,err_VI,'--')
-legend({'3rd order forward difference, double precision', '4th order central difference, double precision', '4th order central difference, single precision'}, 'Location', 'best')
+loglog(h2,err_IV,'--', h2,err_V,'--', h2,err_VI,'--', h2, h2.^3, '-', h2, h2.^4, '-')
+ylim([10^(-15), inf])
+legend({'3rd order fwd diff., DP', '4th order cent diff., DP', '4th order cent diff., SP', '3rd order slope', '4th order slope'}, 'Location', 'best')
 title('$\mathrm{d}(\tan x)/ \mathrm{d}x = \tan^2(x)+1$')
 xlabel('$h$')
 ylabel('error$= \left|(\mathrm{d}f/\mathrm{d}x_{FD} - \mathrm{d}f/\mathrm{d}x_{An})/\mathrm{d}f/\mathrm{d}x_{An}\right|$')
