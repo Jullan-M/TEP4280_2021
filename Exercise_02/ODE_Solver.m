@@ -1,4 +1,4 @@
-% A class that solves ODEs for magnetic pendulum system
+% A class that solves ODEs for magnetic pendulum system given a set of ICs
 
 classdef ODE_Solver
     properties
@@ -24,6 +24,7 @@ classdef ODE_Solver
             f(4) = -y*(1/r3_I + 1/r3_II);
         end
         
+        % Euler's method
         function [xp, yp, up, vp] = euler(obj, dt, tmax)
             nmax=ceil(tmax/dt);
             xp = zeros(1, nmax+1);
@@ -37,7 +38,8 @@ classdef ODE_Solver
                 xp(n+1)=Y(1); yp(n+1)=Y(2); up(n+1)=Y(3); vp(n+1)=Y(4);
             end
         end
-
+        
+        % Heun's method
         function [xp, yp, up, vp] = heun(obj, dt, tmax)
             nmax=ceil(tmax/dt);
             xp = zeros(1, nmax+1);

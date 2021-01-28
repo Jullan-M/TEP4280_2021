@@ -9,26 +9,33 @@ x=2.0; y=0.1000; u=0; v=0;
 solver = ODE_Solver([x,y,u,v]);
 
 tmax=10;  % end time
-dts = 0.000025:0.0000025:0.00005;
+dts = 0.0000125:0.00000625:0.00005;
+n = length(dts);
 
-x_ex = 0.6275405986573285854746018230798654258251190185546875;
-p_h = zeros(6,1); p_e = zeros(6,1);
-for i=1:11
+% "Exact" value of the x-coordinate of the end position (Heun's method with dt=0.000001)
+xt_ex = 0.62754030005734617869705971315852366387844085693359;
+p_h = zeros(n,1); p_e = zeros(n,1);
+for i=1:n
     dt = dts(i)
-    [x2t_h, y2t_h] = solver.heun(2*dt, tmax);
-    [xt_h, yt_h] = solver.heun(dt, tmax);
-    p_h(i) = log(abs((x2t_h(end)- x_ex)/(xt_h(end) - x_ex)))/log(2);
-    [x2t_e, y2t_e] = solver.euler(2*dt, tmax);
-    [xt_e, yt_e] = solver.euler(dt, tmax);
-    p_e(i) = log(abs((x2t_e(end)- x_ex)/(xt_e(end) - x_ex)))/log(2);
+    [x2t, y2t] = solver.heun(2*dt, tmax);
+    [xt, yt] = solver.heun(dt, tmax);
+    % Calculate the end position error and the convergence rate
+    p_h(i) = log(abs((x2t(end) - xt_ex)/(xt(end) - xt_ex)))/log(2);
+    
+    [x2t, y2t] = solver.euler(2*dt, tmax);
+    [xt, yt] = solver.euler(dt, tmax);
+    p_e(i) = log(abs((x2t(end) - xt_ex)/(xt(end) - xt_ex)))/log(2);
 end
 
-
-figure(4)
+set(groot, 'defaultTextInterpreter','latex');
+set(groot,'defaultAxesTickLabelInterpreter','latex');  
+set(groot,'defaultLegendInterpreter','latex');
+figure(1)
 hold on
-plot(dts, p_e, 'b', dts, p_h, 'r') % Plot results
+plot(2*dts, p_e, 'b', 2*dts, p_h, 'r') % Plot results
 hold off
 legend(["Euler's method", "Heun's method"], 'Location', 'best')
-xlabel('dt')
-ylabel('p')
-title(['Chaoticmagnetic pendulum'])
+xlabel('$\Delta t$')
+ylabel('$p$')
+title(['Convergence rate of numerical methods'])
+grid()
