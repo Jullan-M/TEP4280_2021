@@ -35,10 +35,10 @@ classdef ODE_Solver
             Y = obj.Y0;
             y(1) = Y;
             for n=1:nmax
-                t = t + dt;
                 % Only one iteration of Newton's method is applied here
-                dy = obj.func(t, Y) / (1 - dt*dfdy);
-                Y = Y + dt*dy;
+                dy = dt*obj.func(t, Y) / (1 - dt*dfdy);
+                Y = Y + dy;
+                t = t + dt;
                 y(n+1) = Y;
             end
         end
@@ -53,10 +53,11 @@ classdef ODE_Solver
             Y = obj.Y0;
             y(1) = Y;
             for n=1:nmax
-                t = t + dt;
+                
                 % Only one iteration of Newton's method is applied here
-                dy = obj.func(t, Y) / (1 - 0.5*dt*dfdy);
-                Y = Y + dt*dy;
+                dy = dt*(obj.func(t, Y) + obj.func(t+dt, Y)) / (2 - dt*dfdy);
+                Y = Y + dy;
+                t = t + dt;
                 y(n+1) = Y;
             end
         end
