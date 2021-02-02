@@ -2,33 +2,37 @@ clear all
 close all
 clc
 
-dt = 0.01;
+dts = [0.01, 0.1, 0.25];
 y0 = 10;
 tend = 10;
 
-sol = ODE_Solver(y0, @func);
-y_eeul = sol.exp_euler(dt, tend);
-y_ieul = sol.imp_euler(dt, tend);
-y_trap = sol.trapezoid(dt, tend);
+% Define differential function and ODE_Solver object
+func = @(t,y) -100*y + 100*t + 101;
+sol = ODE_Solver(y0, func);
+t_ex = 0:0.01:tend;
+y_exact = 1 + t_ex + (y0 - 1)*exp(-100.*t_ex);
 
-t = 0:dt:tend;
-y_exact = 1 + t + (y0 - 1)*exp(-100.*t);
+set(groot, 'defaultTextInterpreter','latex');
+set(groot,'defaultAxesTickLabelInterpreter','latex');  
+set(groot,'defaultLegendInterpreter','latex');
 
-figure(1)
-plot(t, y_exact, 'k', t, y_eeul, 'r--', t, y_ieul, 'm--', t, y_trap, 'b--')
-legend(["Exact solution", "Explicit Euler", "Implicit Euler", "Trapezoidal"])
-xlabel("t")
-ylabel("y(t)")
-grid()
-
-figure(2)
-title(["Error"])
-plot(t, abs(y_eeul-y_exact), 'r--', t, abs(y_ieul-y_exact), 'm--', t, abs(y_trap-y_exact), 'b--')
-legend(["Explicit Euler", "Implicit Euler", "Trapezoidal"])
-xlabel("t")
-ylabel("y(t)")
-grid()
-
-function dydt = func(t, y)
-    dydt = -100*y + 100*t + 101;
+for i=1:3
+    %y_eeul = sol.exp_euler(dt, tend);
+    %y_ieul = sol.imp_euler(dt, tend);
+    dt = dts(i);
+    y_trap = sol.trapezoid(dt, tend);
+    t = 0:dt:tend;
+    
+    
+    figure(i)
+    plot(t_ex, y_exact, 'k', t, y_trap, 'r--')
+    legend(["Exact solution", "Trapezoidal method"])
+    xlabel("$t$")
+    ylabel("$y(t)$")
+    title(['$\Delta t =', num2str(dt), '$']);
+    grid()
+    
+    
+    error = abs(y_trap-y_exact(1:dt/0.01:end));
+    max(error)
 end

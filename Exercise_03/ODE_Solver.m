@@ -1,5 +1,4 @@
-% A class that solves ODEs for magnetic pendulum system given a set of ICs
-
+% A class that solves ODEs given a set of ICs and differential equations y' = f(t,y)
 classdef ODE_Solver
     properties
         Y0
@@ -43,7 +42,6 @@ classdef ODE_Solver
             end
         end
         
-        % TODO:
         % Trapezoidal method
         function y = trapezoid(obj, dt, tmax)
             nmax=ceil(tmax/dt);
@@ -53,7 +51,6 @@ classdef ODE_Solver
             Y = obj.Y0;
             y(1) = Y;
             for n=1:nmax
-                
                 % Only one iteration of Newton's method is applied here
                 dy = dt*(obj.func(t, Y) + obj.func(t+dt, Y)) / (2 - dt*dfdy);
                 Y = Y + dy;
