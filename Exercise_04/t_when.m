@@ -1,4 +1,4 @@
-% Task a) Finding zeros of u(y=0.5, t) = 0.25
+% Task a) Finding zeros of f(y,t) = u(y=0.5, t) - 0.25 = 0
 clear all
 close all
 clc

@@ -17,14 +17,14 @@ u(jmax)=1;
 y=linspace(0,1,jmax);
 
 % Time step and end of simulation
-dt=0.00125;
-tstop=1;
+dt=10;
+tstop=10;
 nmax=ceil(tstop/dt);
 
 % Scale dt stop at tstop
 dt=tstop/nmax;
-% Stable for r <= 0.5
 r=dt/dy^2;
+% Generate matrix A
 A = diag((1+2*r)*ones(1,jmax)) + diag(-r*ones(1,jmax-1),1) + diag(-r*ones(1,jmax-1),-1);
 A(1,1)=1; A(1,2)=0;
 A(jmax,jmax-1)=0; A(jmax,jmax)=1;
@@ -36,17 +36,18 @@ for n=1:nmax
     b = u;
     
     t=dt*n;
-    t=0.5/sqrt(t);
+    inv_t=0.5/sqrt(t);
     i = (0:5)'; % Sum the analytic solution (3) up to n=5
-    U3= sum(erfc((2*i+1-y)*t)-erfc((2*i+1+y)*t)); % Analytic solution
+    U3= sum(erfc((2*i+1-y)*inv_t)-erfc((2*i+1+y)*inv_t)); % Analytic solution
     
     plot(u,y,U3,y,'m+')
     drawnow;                 
 end
 
 hold on
-xlabel('u(y)')
-ylabel('y')
+xlim([0,1])
+xlabel('$u(y)$')
+ylabel('$y$')
 % plot the steady state solution
 plot(y,y,'r-.')
 grid()

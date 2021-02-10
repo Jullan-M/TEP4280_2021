@@ -46,8 +46,8 @@ for n=1:nmax
 end
 
 hold on
-xlabel('u(y)')
-ylabel('y')
+xlabel('$u(y)$')
+ylabel('$y$')
 % plot the steady state solution
 plot(y,y,'r-.')
 grid()
