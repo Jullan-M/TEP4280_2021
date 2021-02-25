@@ -1,7 +1,4 @@
-% Solving the 1D diffusion equation: Start-up of Couette flow 
-% using Forward-Time-Central-Space (FTCS) scheme,
-% and comparing with analytical solutions.
-% The equation is non-dimensional.
+% DuFort-Frankel method for approximating PDE
 clear all
 close all
 clc
@@ -25,16 +22,19 @@ y=linspace(0,1,jmax);
 
 % Time step and end of simulation
 dt=0.0013
-tstop=0.1; % tstop as found in task a)
+tstop=1; % tstop as found in task a)
 nmax=ceil(tstop/dt);
 
 % Scale dt stop at tstop
 dt=tstop/nmax;
 % Stable for r <= 0.5
 r=dt/dy^2
+% Do one single iteration of the FTCS scheme
+uo = u
+u(2:jmax-1) = u(2:jmax-1)*(1-2*r)+(u(3:jmax)+u(1:jmax-2))*r;
 for n=1:nmax
-    % Do the explicit euler iteration as an array operation
-    u(2:jmax-1) = u(2:jmax-1)*(1-2*r)+(u(3:jmax)+u(1:jmax-2))*r;
+    
+    u(2:jmax-1) = uo + 2*r*(u(3:jmax) - u(2:jmax-1))
     
     t=dt*n;
     inv_t=0.5/sqrt(t);
@@ -43,6 +43,7 @@ for n=1:nmax
     plot(u,y,U3,y,'m+')
     title(['$t=', num2str(t),'$'])
     drawnow;
+    pause;
 end
 
 hold on
